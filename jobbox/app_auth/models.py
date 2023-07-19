@@ -35,6 +35,9 @@ class AppUserManager(auth_models.BaseUserManager):
 
 
 class AppUser(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
+    PROFILE_USER = 'user'
+    PROFILE_HR = 'hr'
+
     USERNAME_FIELD = 'email'
     objects = AppUserManager()
 

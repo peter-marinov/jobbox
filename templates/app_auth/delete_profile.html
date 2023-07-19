@@ -1,0 +1,10 @@
+<h2>Do you want to delete the profile?</h2>
+Email: {{ request.current_user }}
+<br>
+<form action="{% url 'delete_profile' %}" method="POST">
+
+    {{ request.current_user }}
+    <button>Confirm</button>
+    {% csrf_token %}
+</form>
+<a href="{% url 'profile_user' %}">Go back to the profile</a>
