@@ -1,0 +1,15 @@
+<h2>Title: {{ object.title }}</h2>
+<img width=300 src="/media/{{ object.company_logo }}" alt="company logo">
+<p>Programing language: {{ object.programming_language }} </p>
+{% if object.salary %}
+    <p>Salary: {{ object.salary }}</p>
+
+{% endif %}
+<p>Description: {{ object.description }}</p>
+{% if request.current_user.pk == object.hr_id %}
+    <p>
+        <a href="{% url 'edit_job' pk=object.pk %}">Edit</a>
+        <a href="{% url 'delete_job' pk=object.pk %}">Delete</a>
+    </p>
+
+{% endif %}

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 
     # created apps,
     'jobbox.common',
-    'jobbox.app_auth'
+    'jobbox.app_auth',
+    'jobbox.job',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,6 @@ AUTH_USER_MODEL = 'app_auth.AppUser'
 LOGIN_REDIRECT_URL = reverse_lazy('profile_user')
 LOGIN_URL = reverse_lazy('index')
 LOGOUT_REDIRECT_URL = reverse_lazy('index')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media_files'

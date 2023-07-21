@@ -118,5 +118,5 @@ class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
     success_url = reverse_lazy('index')
 
     def get_object(self, queryset=None):
-        a = self.request
         return self.request.current_user
+
