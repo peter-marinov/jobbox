@@ -2,7 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic as views
@@ -11,7 +11,6 @@ from django.contrib.auth import mixins as auth_mixins
 from jobbox.app_auth.views import check_if_account_is_user_or_hr
 from jobbox.job.forms import CreateJobFrom, EditJobFrom
 from jobbox.job.models import Job
-
 
 
 class CreateJobView(views.CreateView):
@@ -23,8 +22,8 @@ class CreateJobView(views.CreateView):
     success_url = reverse_lazy('index')
 
     def form_valid(self, form):
-        a = self
         super().form_valid(form)
+
 
 @login_required
 def create_job(request):
@@ -58,13 +57,35 @@ class HrJobListView(views.ListView):
         jobs = Job.objects.filter(hr_id=self.request.current_user.pk)
         return jobs
 
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.current_user
+
+        if hasattr(user, 'profilehr') or user.is_superuser:
+            return super().dispatch(request, *args, **kwargs)
+
+        return HttpResponse('You do not have permission to access this page.', status=403)
+
 
 class DescriptionJobView(views.DetailView):
     template_name = 'job/description.html'
     model = Job
 
 
-class EditJobView(views.UpdateView):
+class OnlyHRCanEditAndDeleteTheirJobMixin:
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.current_user
+        try:
+            has_job_created = Job.objects.get(hr_id=user.pk)
+        except Job.DoesNotExist:
+            has_job_created = None
+
+        if hasattr(user, 'profilehr') and has_job_created:
+            return super().dispatch(request, *args, **kwargs)
+
+        return HttpResponse('You do not have permission to access this page.', status=403)
+
+
+class EditJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.UpdateView):
     template_name = 'job/update.html'
     model = Job
     form_class = EditJobFrom
@@ -75,7 +96,7 @@ class EditJobView(views.UpdateView):
         return reverse_lazy('description_job', kwargs={'pk': pk})
 
 
-class DeleteJobView(views.DeleteView):
+class DeleteJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.DeleteView):
     template_name = 'job/delete_job.html'
     model = Job
 
@@ -92,4 +113,3 @@ class DeleteJobView(views.DeleteView):
         if os.path.exists(path):
             os.remove(path)
         return HttpResponseRedirect(success_url)
-

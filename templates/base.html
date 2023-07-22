@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<nav>
+{% if not request.current_user.is_authenticated %}
+    <ul>
+        <li><a href="{% url 'login_user' %}">Login</a></li>
+        <li><a href="{% url 'register_user' %}">Register User</a></li>
+        <li><a href="{% url 'register_hr' %}">Register HR</a></li>
+    </ul>
+{% else %}
+    <ul>
+        {% if request.current_user.profilehr %}
+            <li><a href="{% url 'create_job' %}">Create Job</a></li>
+        {% endif %}
+        <li><a href="{% url 'profile_user' %}">Profile</a></li>
+        <li><a href="{% url 'logout_user' %}">Logout</a></li>
+    </ul>
+{% endif %}
+</nav>
+
+{% block content %}
+{% endblock %}
+
+<footer>
+    Created by Peter
+</footer>
+</body>
+</html>

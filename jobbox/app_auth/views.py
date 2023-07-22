@@ -1,5 +1,8 @@
+import os
+
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 # from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect
@@ -10,6 +13,7 @@ from django.contrib.auth import mixins as auth_mixins
 
 from jobbox.app_auth.forms import RegisterUserForm, RegisterUserHRForm, EditUserHRForm, EditUserForm
 from jobbox.app_auth.models import AppUser
+from jobbox.job.models import Job
 
 UserModel = get_user_model()
 
@@ -120,3 +124,21 @@ class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
     def get_object(self, queryset=None):
         return self.request.current_user
 
+    def form_valid(self, form):
+        images_list = [job.company_logo
+                       for job in Job.objects.filter(hr_id=self.request.current_user.pk).all()]
+        success_url = self.get_success_url()
+        self.object.delete()
+
+        # Close the file handle
+        # self.object.company_logo.close()
+
+        for image in images_list:
+            path = image.file.name
+            # Close the file before delete
+            image.close()
+
+            if os.path.exists(path):
+                os.remove(path)
+
+        return HttpResponseRedirect(success_url)

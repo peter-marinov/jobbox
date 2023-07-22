@@ -1,29 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
 <h2>Welcome to JoBBoX</h2>
-{% if not request.current_user.is_authenticated %}
-    <ul>
-        <li><a href="{% url 'login_user' %}">Login</a></li>
-        <li><a href="{% url 'register_user' %}">Register User</a></li>
-        <li><a href="{% url 'register_hr' %}">Register HR</a></li>
-    </ul>
-{% else %}
-    <h3>Hi, {{ request.current_user.profile.first_name }} {{ request.current_user }}</h3>
-    <ul>
-        {% if request.current_user.profilehr %}
-            <li><a href="{% url 'create_job' %}">Create Job</a></li>
-        {% endif %}
-        <li><a href="{% url 'profile_user' %}">Profile</a></li>
-        <li><a href="{% url 'logout_user' %}">Logout</a></li>
-    </ul>
+{% if request.current_user %}
+   Hi, {{ request.current_user }}
 {% endif %}
-</body>
-</html>
+{% endblock %}

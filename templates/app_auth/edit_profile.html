@@ -1,5 +1,10 @@
-<form action="{% url 'edit_profile' %}" method="POST">
-    {{ form }}
-    <button>Edit</button>
-    {% csrf_token %}
-</form>
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action="{% url 'edit_profile' %}" method="POST">
+        {{ form }}
+        <button>Edit</button>
+        {% csrf_token %}
+    </form>
+
+{% endblock %}

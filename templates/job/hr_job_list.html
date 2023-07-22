@@ -1,7 +1,14 @@
-<ul>
-    {% for job in object_list %}
-        <li>Title: {{ job.title }}</li>
-        Job description {{ job.description|truncatechars:21 }}
-        <a href="{% url 'description_job' pk=job.pk %}">Job details</a>
-    {% endfor %}
-</ul>
+{% extends 'base.html' %}
+{% block content %}
+
+    <ul>
+        {% for job in object_list %}
+            <li>Title: {{ job.title }}</li>
+            Job description {{ job.description|truncatechars:21 }}
+            <a href="{% url 'description_job' pk=job.pk %}">Job details</a>
+        {% empty %}
+            <h2>No jobs</h2>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
