@@ -13,8 +13,22 @@
 
     {% if request.current_user.profilehr %}
         <a href="{% url 'my_hr_list' %}">Check my created jobs</a>
+    {% else %}
+        <a href="{% url 'create_note' %}">Create note</a>
     {% endif %}
     <a href="{% url 'edit_profile' %}">Edit Profile</a>
     <a href="{% url 'delete_profile' %}">Delete Profile</a>
+
+    {% if notes %}
+        <ul>
+            {% for note in notes %}
+                <li>{{ note.date }} {{ note.title }}</li>
+                <a href="{% url 'edit_note' pk=note.pk %}">Edit</a>
+                <a href="{% url 'delete_note' pk=note.pk %}">Delete</a>
+            {% endfor %}
+        </ul>
+    {% else %}
+        No notes have been created yet.
+    {% endif %}
 
 {% endblock %}

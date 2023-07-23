@@ -14,6 +14,7 @@ from django.contrib.auth import mixins as auth_mixins
 from jobbox.app_auth.forms import RegisterUserForm, RegisterUserHRForm, EditUserHRForm, EditUserForm
 from jobbox.app_auth.models import AppUser
 from jobbox.job.models import Job
+from jobbox.note.models import UserNote
 
 UserModel = get_user_model()
 
@@ -74,9 +75,11 @@ def check_if_account_is_user_or_hr(request):
 @login_required
 def profile_user(request):
     user, user_type = check_if_account_is_user_or_hr(request)
+    notes = UserNote.objects.filter(user_id=user.pk)
     context = {
         'user': user,
         'user_type': user_type,
+        'notes': notes,
     }
     return render(request, 'app_auth/profile.html', context=context)
 
