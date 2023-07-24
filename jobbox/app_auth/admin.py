@@ -9,3 +9,4 @@ class AppUserAdmin(admin.ModelAdmin):
     list_display = ['id', 'email', 'is_superuser', 'is_staff']
     ordering = ['id']
     list_filter = ['is_superuser', 'is_staff']
+    search_fields = ['email']

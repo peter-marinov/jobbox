@@ -16,7 +16,6 @@ from jobbox.job.models import Job
 class CreateJobView(views.CreateView):
     template_name = 'job/create-job.html'
     model = Job
-    # fields = ['title', 'company_logo', 'programming_language', 'salary', 'description']
     fields = '__all__'
 
     success_url = reverse_lazy('index')

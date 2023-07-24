@@ -53,10 +53,16 @@ class RegisterUserHRForm(auth_forms.UserCreationForm):
     FIRST_NAME_MAX_LEN = 30
     COMPANY_NAME_MAX_LEN = 30
 
-    first_name = forms.CharField(
-        max_length=FIRST_NAME_MAX_LEN,
-        required=True,
+    password2 = forms.CharField(
+        label=_("Repeat Password"),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        strip=False,
+        help_text=_("Repeat password, please"),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].help_text = 'it works'
 
     company_name = forms.CharField(
             max_length=15,
