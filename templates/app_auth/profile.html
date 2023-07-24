@@ -12,10 +12,16 @@
     {% endif %}
 
     {% if request.current_user.profilehr %}
-        <a href="{% url 'my_hr_list' %}">Check my created jobs</a>
+        <a href="{% url 'my_hr_list' %}">My jobs list</a>
+        <a href="{% url 'create_job' %}">Create job</a>
+
+        <a href="{% url 'list_hr_task' %}">My tasks list</a>
+        <a href="{% url 'create_hr_task' %}">Create task</a>
     {% else %}
         <a href="{% url 'create_note' %}">Create note</a>
     {% endif %}
+    <br>
+    <br>
     <a href="{% url 'edit_profile' %}">Edit Profile</a>
     <a href="{% url 'delete_profile' %}">Delete Profile</a>
 

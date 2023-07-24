@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'jobbox.app_auth',
     'jobbox.job',
     'jobbox.note',
+    'jobbox.task',
 ]
 
 MIDDLEWARE = [

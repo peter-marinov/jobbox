@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action="{% url 'create_hr_task' %}" method="POST">
+        {{ form }}
+        <button>Create</button>
+        {% csrf_token %}
+    </form>
+
+{% endblock %}

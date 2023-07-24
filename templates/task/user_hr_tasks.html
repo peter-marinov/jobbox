@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if object_list %}
+        <ul>
+            {% for object in object_list %}
+                <li>{{ object.task }} Status: {{ object.status }}</li>
+                <a href="{% url 'edit_hr_task' pk=object.pk %}">Edit</a>
+                <a href="{% url 'delete_hr_task' pk=object.pk %}">Delete</a>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

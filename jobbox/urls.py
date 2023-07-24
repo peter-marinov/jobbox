@@ -25,6 +25,7 @@ urlpatterns = [
     path('user/', include('jobbox.app_auth.urls')),
     path('job/', include('jobbox.job.urls')),
     path('note/', include('jobbox.note.urls')),
+    path('task/', include('jobbox.task.urls')),
 ]
 
 if settings.DEBUG:

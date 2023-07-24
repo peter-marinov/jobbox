@@ -16,7 +16,7 @@ class UserProfileAccessMixin:
         return HttpResponse('You do not have permission to access this page.', status=403)
 
 
-class UserProfileAccessHisNoteMixin:
+class UserProfileAccessOwnNoteMixin:
     def dispatch(self, request, *args, **kwargs):
         instance = self.get_object()
         user = self.request.current_user
@@ -38,14 +38,14 @@ class CreateNote(auth_mixins.LoginRequiredMixin, UserProfileAccessMixin, views.C
         return super().form_valid(form)
 
 
-class EditUserNote(auth_mixins.LoginRequiredMixin, UserProfileAccessHisNoteMixin, views.UpdateView):
+class EditUserNote(auth_mixins.LoginRequiredMixin, UserProfileAccessOwnNoteMixin, views.UpdateView):
     template_name = 'note/edit_note.html'
     model = UserNote
     fields = ['title', 'description']
     success_url = reverse_lazy('profile_user')
 
 
-class DeleteUserNote(auth_mixins.LoginRequiredMixin, UserProfileAccessHisNoteMixin, views.DeleteView):
+class DeleteUserNote(auth_mixins.LoginRequiredMixin, UserProfileAccessOwnNoteMixin, views.DeleteView):
     template_name = 'note/delete_note.html'
     model = UserNote
     success_url = reverse_lazy('profile_user')
