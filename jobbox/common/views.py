@@ -4,10 +4,15 @@ from django.urls import reverse_lazy
 from django.views import generic as views
 
 from jobbox.common.models import ContactUs
+from jobbox.job.models import Job
 
 
 def index(request):
-    return render(request, 'common/index.html')
+    jobs = Job.objects.all()
+    context = {
+        'jobs': jobs
+    }
+    return render(request, 'common/index.html', context=context)
 
 
 class AboutView(SuccessMessageMixin, views.CreateView):

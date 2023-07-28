@@ -16,17 +16,6 @@ from jobbox.job.forms import CreateJobFrom, EditJobFrom, UploadCVForm
 from jobbox.job.models import Job, UploadCV
 
 
-class CreateJobView(views.CreateView):
-    template_name = 'job/create-job.html'
-    model = Job
-    fields = '__all__'
-
-    success_url = reverse_lazy('index')
-
-    def form_valid(self, form):
-        super().form_valid(form)
-
-
 @login_required
 def create_job(request):
     user = check_if_account_is_user_or_hr(request)
@@ -65,10 +54,6 @@ class HrJobListView(views.ListView):
 
         return HttpResponse('You do not have permission to access this page.', status=403)
 
-
-# class DescriptionJobView(views.DetailView):
-#     template_name = 'job/description.html'
-#     model = Job
 
 def description_job_view(request, pk):
     job_object = Job.objects.get(pk=pk)

@@ -1,47 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="row justify-content-center mt-5">
+        <article>
+            <h2>Title: {{ object.title }}</h2>
+            <img width=300 src="/media/{{ object.company_logo }}" alt="company logo">
+            <p>Programing language: {{ object.programming_language }} </p>
+            {% if object.salary %}
+                <p>Salary: {{ object.salary }}</p>
 
-    <h2>Title: {{ object.title }}</h2>
-    <img width=300 src="/media/{{ object.company_logo }}" alt="company logo">
-    <p>Programing language: {{ object.programming_language }} </p>
-    {% if object.salary %}
-        <p>Salary: {{ object.salary }}</p>
+            {% endif %}
+            <p>Description: {{ object.description }}</p>
+            {% if request.current_user.pk == object.hr_id %}
+                <p>
+                    <a href="{% url 'edit_job' pk=object.pk %}">Edit</a>
+                    <a href="{% url 'delete_job' pk=object.pk %}">Delete</a>
+                </p>
 
-    {% endif %}
-    <p>Description: {{ object.description }}</p>
-    {% if request.current_user.pk == object.hr_id %}
-        <p>
-            <a href="{% url 'edit_job' pk=object.pk %}">Edit</a>
-            <a href="{% url 'delete_job' pk=object.pk %}">Delete</a>
-        </p>
+                {% if job_cvs %}
+                    <ul>
+                        {% for job_cv in job_cvs %}
+                            <li>
+                                Email: {{ job_cv.email }}
+                                <p><a href="{% url 'download_cv' pk=job_cv.pk %}">Download CV</a></p>
+                                <p><a href="{% url 'delete_cv' pk=job_cv.pk %}">Delete</a></p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
 
-        {% if job_cvs %}
-        <ul>
-            {% for job_cv in job_cvs %}
-                <li>
-                    Email: {{ job_cv.email }}
-                     <p><a href="{% url 'download_cv' pk=job_cv.pk %}">Download CV</a></p>
-                     <p><a href="{% url 'delete_cv' pk=job_cv.pk %}">Delete</a></p>
-                </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% endif %}
+        </article>
 
-    {% endif %}
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <form action="{% url 'description_job' pk=object.pk %}" method="POST" enctype="multipart/form-data">
-        {{ form }}
-        <button>Submit CV</button>
-        {% csrf_token %}
-    </form>
+        <div class="col-sm-3">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="text-success"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form action="{% url 'description_job' pk=object.pk %}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    {{ form }}
+                    <button class="btn btn-primary mt-2">Submit CV</button>
+                    {% csrf_token %}
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 {% endblock %}

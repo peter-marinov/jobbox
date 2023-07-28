@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
     <h2>User: {{ request.current_user }}</h2>
 
     <p>Name: {{ user.full_name }}</p>
-    <img width=300 src="/media/{{ user.profile_picture }}" alt="company logo">
+    {% if user.profile_picture %}
+        <img width=150 src="/media/{{ user.profile_picture }}" alt="company logo">
+    {% else %}
+        <img width=150 src="{% static 'profilehr/profile-user.png'%}" alt="">
+    {% endif %}
     <p>Company: {{ user.company_name }}</p>
     <p>Telephone number: {{ user.telephone_number }}</p>
 

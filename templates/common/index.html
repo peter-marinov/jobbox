@@ -1,7 +1,57 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Welcome to JoBBoX</h2>
-{% if request.current_user %}
-   Hi, {{ request.current_user }}
-{% endif %}
+
+{#        <div class="mt-5">#}
+            <h2>Welcome to JoBBoX</h2>
+
+            {% if jobs %}
+                <p>Filter your desired jobs:</p>
+                <input class="form-control container-fluid mb-3" id="myInput" type="text" placeholder="Search..">
+                <br>
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Programming Language</th>
+                        <th scope="col">Salary</th>
+                        <th scope="col">Description</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable">
+                    {% for job in jobs %}
+                        <tr>
+                            <td>{{ job.title }}</td>
+                            <td>{{ job.programming_language }}</td>
+                            <td>
+                                {% if job.salary  %}
+                                    {{ job.salary }}
+                                {% else %}
+                                    Not shared
+                                {% endif %}
+                            </td>
+                            <td>{{ job.description|truncatechars:21 }}</td>
+                            <td>
+                                <a class="btn btn-info" href="{% url 'description_job' pk=job.pk %}">See more</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h1>No job yet :(</h1>
+            {% endif %}
+{#        </div>#}
+
+
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
 {% endblock %}

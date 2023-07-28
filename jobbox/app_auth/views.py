@@ -9,7 +9,7 @@ from django.views import generic as views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import mixins as auth_mixins
 
-from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm
+from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm, UserLoginForm
 from jobbox.app_auth.models import AppUser
 
 from jobbox.job.models import Job
@@ -19,6 +19,7 @@ UserModel = get_user_model()
 
 class LoginUserView(auth_views.LoginView):
     template_name = 'app_auth/login.html'
+    authentication_form = UserLoginForm
 
 
 class RegisterUserView(views.CreateView):

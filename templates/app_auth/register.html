@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <form action="{% url 'register_user' %}" method="POST">
-        {{ form.as_p }}
-        <button>Register</button>
-        {% csrf_token %}
-    </form>
-    <a href="{% url 'index' %}">Go to the home page</a>
+        <div class="row justify-content-center mt-5">
+            <div class="col-sm-4">
+                <form action="{% url 'register_user' %}" method="POST">
+                    <div class="form-group">
+                        {{ form }}
+                        <button class="btn btn-primary mt-2">Register</button>
+                        {% csrf_token %}
+                    </div>
+                </form>
+            </div>
+        </div>
+
 
 {% endblock %}

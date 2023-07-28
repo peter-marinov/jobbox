@@ -12,7 +12,12 @@ class CreateJobFrom(forms.ModelForm):
         model = Job
         fields = '__all__'
         widgets = {
-                'hr': forms.HiddenInput()
+                'hr': forms.HiddenInput(),
+                'title': forms.TextInput(attrs={'class': 'form-control'}),
+                'company_logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+                'programming_language': forms.TextInput(attrs={'class': 'form-control'}),
+                'salary': forms.NumberInput(attrs={'class': 'form-control'}),
+                'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             }
 
 
@@ -30,6 +35,8 @@ class UploadCVForm(forms.ModelForm):
         model = UploadCV
         fields = '__all__'
         widgets = {
-            'job_id': forms.HiddenInput()
+            'job_id': forms.HiddenInput(),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'pdf_file': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
