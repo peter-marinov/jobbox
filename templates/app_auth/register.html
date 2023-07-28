@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    {{ type }}
     <form action="{% url 'register_user' %}" method="POST">
         {{ form.as_p }}
         <button>Register</button>

@@ -3,13 +3,12 @@
 
     <h2>User: {{ request.current_user }}</h2>
 
+    <p>Name: {{ user.full_name }}</p>
+    <img width=300 src="/media/{{ user.profile_picture }}" alt="company logo">
+    <p>Company: {{ user.company_name }}</p>
+    <p>Telephone number: {{ user.telephone_number }}</p>
 
-    {% if user_type == 'user' %}
-        <p>Name: {{ user.first_name }}</p>
-    {% else %}
-        <p>Name: {{ user.first_name }}</p>
-        <p>Company: {{ user.company_name }}</p>
-    {% endif %}
+
 
     {% if request.current_user.profilehr %}
         <a href="{% url 'my_hr_list' %}">My jobs list</a>

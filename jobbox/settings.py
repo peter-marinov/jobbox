@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'jobbox.common',
     'jobbox.app_auth',
     'jobbox.job',
-    'jobbox.note',
     'jobbox.task',
 ]
 

@@ -41,3 +41,5 @@ class HRTask(models.Model):
 
     class Meta:
         ordering = ['pk']
+        verbose_name = 'HR Task'
+        verbose_name_plural = 'HR Tasks'

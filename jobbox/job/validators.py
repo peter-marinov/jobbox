@@ -7,7 +7,7 @@ class FileSizeValidatorInMB(BaseValidator):
         super().__init__(limit_value_in_mb)
         self.limit_value_in_mb = limit_value_in_mb
         self.limit_value_in_bytes = limit_value_in_mb * 1024 * 1024
-        self.message = f'File is bigger than {self.limit_value_in_mb}'
+        self.message = f'File is bigger than {self.limit_value_in_mb} MB'
 
     def __call__(self, value):
         if value.size > self.limit_value_in_bytes:

@@ -15,6 +15,33 @@
             <a href="{% url 'delete_job' pk=object.pk %}">Delete</a>
         </p>
 
+        {% if job_cvs %}
+        <ul>
+            {% for job_cv in job_cvs %}
+                <li>
+                    Email: {{ job_cv.email }}
+                     <p><a href="{% url 'download_cv' pk=job_cv.pk %}">Download CV</a></p>
+                     <p><a href="{% url 'delete_cv' pk=job_cv.pk %}">Delete</a></p>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
     {% endif %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form action="{% url 'description_job' pk=object.pk %}" method="POST" enctype="multipart/form-data">
+        {{ form }}
+        <button>Submit CV</button>
+        {% csrf_token %}
+    </form>
+
 
 {% endblock %}

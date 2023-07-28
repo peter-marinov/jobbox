@@ -58,3 +58,17 @@ class Job(models.Model):
         AppUser,
         on_delete=models.CASCADE,
     )
+
+
+class UploadCV(models.Model):
+    email = models.EmailField()
+
+    pdf_file = models.FileField(
+        upload_to='cv_pdfs'
+    )
+
+    job_id = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE
+    )
+

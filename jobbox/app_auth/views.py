@@ -3,18 +3,16 @@ import os
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-# from django.contrib.auth.decorators import login_required
-
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic as views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import mixins as auth_mixins
 
-from jobbox.app_auth.forms import RegisterUserForm, RegisterUserHRForm, EditUserHRForm, EditUserForm
+from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm
 from jobbox.app_auth.models import AppUser
+
 from jobbox.job.models import Job
-from jobbox.note.models import UserNote
 
 UserModel = get_user_model()
 
@@ -25,32 +23,8 @@ class LoginUserView(auth_views.LoginView):
 
 class RegisterUserView(views.CreateView):
     template_name = 'app_auth/register.html'
-    form_class = RegisterUserForm
-    success_url = reverse_lazy('index')
-
-    def form_valid(self, form):
-        result = super().form_valid(form)
-        login(self.request, self.object)
-
-        return result
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['type'] = 'USER'
-
-        return context
-
-
-class RegisterHRView(views.CreateView):
-    template_name = 'app_auth/register-hr.html'
     form_class = RegisterUserHRForm
     success_url = reverse_lazy('index')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['type'] = 'HR'
-
-        return context
 
     def form_valid(self, form):
         result = super().form_valid(form)
@@ -65,58 +39,61 @@ class LogoutUserView(auth_views.LogoutView):
 
 def check_if_account_is_user_or_hr(request):
     if hasattr(request.current_user, 'profilehr'):
-        user_type = 'hr'
-        return request.current_user.profilehr, user_type
-    else:
-        user_type = 'user'
-        return request.current_user.profile, user_type
+        return request.current_user.profilehr
 
 
 @login_required
 def profile_user(request):
-    user, user_type = check_if_account_is_user_or_hr(request)
-    notes = UserNote.objects.filter(user_id=user.pk)
     context = {
-        'user': user,
-        'user_type': user_type,
-        'notes': notes,
+        'user': request.current_user.profilehr,
     }
     return render(request, 'app_auth/profile.html', context=context)
 
 
 @login_required
 def update_profile(request):
-    user, user_type = check_if_account_is_user_or_hr(request)
+    user = check_if_account_is_user_or_hr(request)
 
-    if user_type == AppUser.PROFILE_USER:
-        initial_data = {
-            'first_name': user.first_name,
-        }
-        edit_form = EditUserForm
-    else:
-        initial_data = {
-            'first_name': user.first_name,
-            'company_name': user.company_name,
-        }
-        edit_form = EditUserHRForm
+    # Set the initial data for edit in the form
+    initial_data = {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'company_name': user.company_name,
+        'profile_picture': user.profile_picture,
+        'telephone_number': user.telephone_number,
+    }
 
     if request.method == 'GET':
-        form = edit_form(
+        form = EditUserHRForm(
             initial=initial_data
         )
     else:
-        form = edit_form(request.POST)
+        form = EditUserHRForm(request.POST, request.FILES)
         if form.is_valid():
-            if user_type is AppUser.PROFILE_USER:
-                user.first_name = form.cleaned_data['first_name']
-            else:
-                user.first_name = form.cleaned_data['first_name']
-                user.company_name = form.cleaned_data['company_name']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.company_name = form.cleaned_data['company_name']
+            user.telephone_number = form.cleaned_data['telephone_number']
+
+            if 'profile_picture' in form.cleaned_data:
+                new_profile_picture = form.cleaned_data['profile_picture']
+
+                # Check if the new profile picture is different from the existing one
+                if new_profile_picture != user.profile_picture:
+                    # Remove the existing profile picture file from storage
+                    if user.profile_picture:
+                        # Delete the existing profile picture file from storage
+                        if os.path.exists(user.profile_picture.path):
+                            os.remove(user.profile_picture.path)
+
+                    # Assign the new profile picture to the user
+                    user.profile_picture = new_profile_picture
+
             user.save()
 
             return redirect('profile_user')
 
-    return render(request, 'app_auth/edit_profile.html', context={'form': form, 'user_type': user_type})
+    return render(request, 'app_auth/edit_profile.html', context={'form': form, 'user': user})
 
 
 class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
@@ -128,8 +105,14 @@ class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
         return self.request.current_user
 
     def form_valid(self, form):
+        user = self.request.current_user
         images_list = [job.company_logo
-                       for job in Job.objects.filter(hr_id=self.request.current_user.pk).all()]
+                       for job in Job.objects.filter(hr_id=user.pk).all()]
+
+        # Check if there is profile picture and then add it to the list
+        if user.profilehr.profile_picture:
+            images_list.append(user.profilehr.profile_picture)
+
         success_url = self.get_success_url()
         self.object.delete()
 

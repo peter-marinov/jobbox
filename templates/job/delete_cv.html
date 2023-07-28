@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Do you want to delete the CV from {{ object.email }}?</h2>
+    <form action="{% url 'delete_cv' pk=object.pk %}" method="POST">
+        {{ form }}
+        <button>Delete</button>
+        {% csrf_token %}
+    </form>
+{% endblock %}

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <form action="{% url 'edit_profile' %}" method="POST">
-        {{ form }}
+    <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
+        {{ form.as_p }}
         <button>Edit</button>
         {% csrf_token %}
     </form>

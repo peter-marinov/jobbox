@@ -2,37 +2,61 @@ from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db import models
 
-from jobbox.app_auth.models import AppUser
+from jobbox.common.validators import check_if_only_letters, check_if_number_starts_with_zero_or_plus
+from jobbox.job.validators import FileSizeValidatorInMB
 
-# Create your models here.
 UserModel = get_user_model()
 
 
-class Profile(models.Model):
-    first_name = models.CharField(
-        max_length=30,
-        null=True,
-        blank=True,
-    )
-
-    user = models.OneToOneField(
-        UserModel,
-        on_delete=models.CASCADE,
-        primary_key=True,
-    )
-
-
 class ProfileHR(models.Model):
+    FIRST_NAME_MAX_LEN = 30
+    LAST_NAME_MAX_LEN = 30
+    COMPANY_NAME_MAX_LEN = 15
+    TELEPHONE_NUMBER_MAX_LEN = 13
+    TELEPHONE_NUMBER_MIN_LEN = 4
+    PROFILE_PICTURE_MAX_SIZE_IN_MB = 1
+
     first_name = models.CharField(
-        max_length=30,
+        max_length=FIRST_NAME_MAX_LEN,
+        null=True,
+        blank=False,
+        validators=[
+            check_if_only_letters,
+        ]
+    )
+
+    last_name = models.CharField(
+        max_length=LAST_NAME_MAX_LEN,
         null=True,
         blank=True,
+        validators=[
+            check_if_only_letters,
+        ]
     )
 
     company_name = models.CharField(
-        max_length=30,
+        max_length=COMPANY_NAME_MAX_LEN,
         null=True,
         blank=True,
+    )
+
+    profile_picture = models.ImageField(
+        upload_to='profilehr',
+        null=True,
+        blank=True,
+        validators=[
+            FileSizeValidatorInMB(PROFILE_PICTURE_MAX_SIZE_IN_MB)
+        ]
+    )
+
+    telephone_number = models.CharField(
+        max_length=TELEPHONE_NUMBER_MAX_LEN,
+        null=True,
+        blank=True,
+        validators=[
+            validators.MinLengthValidator(TELEPHONE_NUMBER_MIN_LEN),
+            check_if_number_starts_with_zero_or_plus,
+        ]
     )
 
     user = models.OneToOneField(
@@ -40,6 +64,14 @@ class ProfileHR(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
+
+    def full_name(self):
+        if self.last_name:
+            return f'{self.first_name} {self.last_name}'
+        return f'{self.first_name}'
+
+    class Meta:
+        verbose_name_plural = 'Profile HRs'
 
 
 class ContactUs(models.Model):
@@ -59,3 +91,7 @@ class ContactUs(models.Model):
             validators.MinLengthValidator(DESCRIPTION_MIN_LEN),
         )
     )
+
+    class Meta:
+        ordering = ['-pk']
+        verbose_name_plural = 'Contact Us'

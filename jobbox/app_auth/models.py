@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth import models as auth_models, get_user_model
 
 
+
+
 class AppUserManager(auth_models.BaseUserManager):
     use_in_migrations = True
 
@@ -31,13 +33,18 @@ class AppUserManager(auth_models.BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self._create_user(email, password, **extra_fields)
+        user = self._create_user(email, password, **extra_fields)
+
+        # Check if the user is a superuser
+        if user.is_superuser:
+            # Import the ProfileHR model and create the associated instance
+            from jobbox.common.models import ProfileHR
+            ProfileHR.objects.get_or_create(user=user)
+
+        return user
 
 
 class AppUser(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
-    PROFILE_USER = 'user'
-    PROFILE_HR = 'hr'
-
     USERNAME_FIELD = 'email'
     objects = AppUserManager()
 
