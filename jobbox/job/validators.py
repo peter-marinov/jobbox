@@ -13,3 +13,8 @@ class FileSizeValidatorInMB(BaseValidator):
         if value.size > self.limit_value_in_bytes:
             raise ValidationError(self.message)
 
+
+def validate_pdf_file(value):
+    file_extension = value.name.split('.')[-1].lower()
+    if file_extension != 'pdf':
+        raise ValidationError("Only PDF files are allowed.")

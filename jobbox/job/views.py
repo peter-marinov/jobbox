@@ -28,14 +28,14 @@ def create_job(request):
             form.fields['hr_id'] = user.pk
             form.save()
 
-            return redirect('profile_user')
+            return redirect('my_hr_list')
 
     context = {
 
         'form': form,
     }
 
-    return render(request, 'job/create-job.html', context=context)
+    return render(request, 'job/create_job.html', context=context)
 
 
 class HrJobListView(views.ListView):
@@ -76,7 +76,7 @@ def description_job_view(request, pk):
         'job_cvs': job_cvs,
     }
 
-    return render(request, 'job/description.html', context=context)
+    return render(request, 'job/description_job.html', context=context)
 
 
 def download_cv(request, pk):
@@ -93,8 +93,15 @@ def download_cv(request, pk):
 class OnlyHRCanEditAndDeleteTheirJobMixin:
     def dispatch(self, request, *args, **kwargs):
         user = self.request.current_user
+        if not user:
+            return HttpResponse('You do not have permission to access this page.', status=403)
+
         try:
-            has_job_created = Job.objects.get(hr_id=user.pk)
+            job = Job.objects.get(pk=kwargs['pk'])
+            if job.hr_id == user.pk:
+                has_job_created = job
+            else:
+                has_job_created = None
         except Job.DoesNotExist:
             has_job_created = None
 
@@ -105,13 +112,33 @@ class OnlyHRCanEditAndDeleteTheirJobMixin:
 
 
 class EditJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.UpdateView):
-    template_name = 'job/update.html'
+    template_name = 'job/edit_job.html'
     model = Job
     form_class = EditJobFrom
 
     def get_success_url(self):
         pk = self.object.pk
         return reverse_lazy('description_job', kwargs={'pk': pk})
+
+    def form_valid(self, form):
+        if 'company_logo' in form.cleaned_data:
+            new_company_logo = form.cleaned_data['company_logo']
+            job = Job.objects.get(pk=self.kwargs['pk'])
+
+            # Check if the new logo picture is different from the existing one
+            if new_company_logo != job.company_logo:
+                # Check if there is company logo
+                if job.company_logo:
+                    # Delete the existing profile picture file from storage
+                    if os.path.exists(job.company_logo.path):
+                        os.remove(job.company_logo.path)
+
+                # Assign the new logo picture to the job
+                job.company_logo = new_company_logo
+
+        self.object = form.save()
+        return super().form_valid(form)
+
 
 
 class DeleteJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.DeleteView):

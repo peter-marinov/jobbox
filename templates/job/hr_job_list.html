@@ -1,14 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <ul>
-        {% for job in object_list %}
-            <li>Title: {{ job.title }}</li>
-            Job description {{ job.description|truncatechars:21 }}
-            <a href="{% url 'description_job' pk=job.pk %}">Job details</a>
-        {% empty %}
-            <h2>No jobs</h2>
-        {% endfor %}
-    </ul>
+    {% if object_list %}
+        <p>You created in total {{ object_list|length }} jobs. Filter your created jobs:</p>
+        <input class="form-control container-fluid mb-3" id="hrJobsTableInput" type="text" placeholder="Search..">
+        <br>
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Programming Language</th>
+                <th scope="col">Salary</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody id="hrJobsTable">
+            {% for job in object_list %}
+                <tr>
+                    <td>{{ job.title }}</td>
+                    <td>{{ job.programming_language }}</td>
+                    <td>
+                        {% if job.salary %}
+                            {{ job.salary }}
+                        {% else %}
+                            Not shared
+                        {% endif %}
+                    </td>
+                    <td>{{ job.description|truncatechars:41 }}</td>
+                    <td>
+                        <a class="btn btn-info" href="{% url 'description_job' pk=job.pk %}">See more</a>
+                        <a class="btn btn-warning" href="{% url 'edit_job' pk=job.pk %}">Edit</a>
+                        <a class="btn btn-danger" href="{% url 'delete_job' pk=job.pk %}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h2>No jobs</h2>
+    {% endif %}
+
+    <script>
+        $(document).ready(function () {
+            $("#hrJobsTableInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#hrJobsTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
 
 {% endblock %}

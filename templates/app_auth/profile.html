@@ -2,43 +2,37 @@
 {% load static %}
 {% block content %}
 
-    <h2>User: {{ request.current_user }}</h2>
+    <section class="card bg-transparent" style="width: 28rem;">
+        {% if user.profile_picture %}
+            <img class="card-img-top" src="/media/{{ user.profile_picture }}" alt="company logo">
+        {% else %}
+            <img class="card-img-top" src="{% static 'profilehr/profile-user.png' %}" alt="">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">Name: {{ user.full_name }}</h5>
 
-    <p>Name: {{ user.full_name }}</p>
-    {% if user.profile_picture %}
-        <img width=150 src="/media/{{ user.profile_picture }}" alt="company logo">
-    {% else %}
-        <img width=150 src="{% static 'profilehr/profile-user.png'%}" alt="">
-    {% endif %}
-    <p>Company: {{ user.company_name }}</p>
-    <p>Telephone number: {{ user.telephone_number }}</p>
+            <p class="card-text">Company: {{ user.company_name }}</p>
+            {% if user.telephone_number %}
+                <p class="card-text">Telephone number: {{ user.telephone_number }}</p>
+            {% else %}
+                <p class="card-text">Telephone number: Not added</p>
+            {% endif %}
+            <a class="btn btn-warning mr-5" href="{% url 'edit_profile' %}">Edit Profile</a>
+            <a class="btn btn-danger" href="{% url 'delete_profile' %}">Delete Profile</a>
+        </div>
+    </section>
 
-
-
-    {% if request.current_user.profilehr %}
+    <div class="links">
         <a href="{% url 'my_hr_list' %}">My jobs list</a>
         <a href="{% url 'create_job' %}">Create job</a>
 
         <a href="{% url 'list_hr_task' %}">My tasks list</a>
         <a href="{% url 'create_hr_task' %}">Create task</a>
-    {% else %}
-        <a href="{% url 'create_note' %}">Create note</a>
-    {% endif %}
-    <br>
-    <br>
-    <a href="{% url 'edit_profile' %}">Edit Profile</a>
-    <a href="{% url 'delete_profile' %}">Delete Profile</a>
 
-    {% if notes %}
-        <ul>
-            {% for note in notes %}
-                <li>{{ note.date }} {{ note.title }}</li>
-                <a href="{% url 'edit_note' pk=note.pk %}">Edit</a>
-                <a href="{% url 'delete_note' pk=note.pk %}">Delete</a>
-            {% endfor %}
-        </ul>
-    {% else %}
-        No notes have been created yet.
-    {% endif %}
+
+        <br>
+        <br>
+
+    </div>
 
 {% endblock %}

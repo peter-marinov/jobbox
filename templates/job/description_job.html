@@ -1,38 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="row justify-content-center mt-5">
-        <article>
-            <h2>Title: {{ object.title }}</h2>
-            <img width=300 src="/media/{{ object.company_logo }}" alt="company logo">
+    <div class="d-flex align-items-start justify-content-around bd-highlight mb-3 mt-5">
+        <section class="p-2 bd-highlight">
+
+            <h3>Title: {{ object.title }}</h3>
+            {% if object.company_logo %}
+                <img width=300 src="/media/{{ object.company_logo }}" alt="company logo">
+            {% endif %}
             <p>Programing language: {{ object.programming_language }} </p>
             {% if object.salary %}
                 <p>Salary: {{ object.salary }}</p>
-
             {% endif %}
             <p>Description: {{ object.description }}</p>
             {% if request.current_user.pk == object.hr_id %}
                 <p>
-                    <a href="{% url 'edit_job' pk=object.pk %}">Edit</a>
-                    <a href="{% url 'delete_job' pk=object.pk %}">Delete</a>
+                    <a class="btn btn-warning" href="{% url 'edit_job' pk=object.pk %}">Edit</a>
+                    <a class="btn btn-danger" href="{% url 'delete_job' pk=object.pk %}">Delete</a>
                 </p>
 
                 {% if job_cvs %}
-                    <ul>
+                    <h4>Candidates list:</h4>
+                    <ul class="list-group list-group-flush">
                         {% for job_cv in job_cvs %}
-                            <li>
-                                Email: {{ job_cv.email }}
-                                <p><a href="{% url 'download_cv' pk=job_cv.pk %}">Download CV</a></p>
-                                <p><a href="{% url 'delete_cv' pk=job_cv.pk %}">Delete</a></p>
+                            <li class="list-group-item">
+                                <span>Email: {{ job_cv.email }}</span>
+                                <a class="btn btn-success" href="{% url 'download_cv' pk=job_cv.pk %}">Download CV</a>
+                                <a class="btn btn-danger" href="{% url 'delete_cv' pk=job_cv.pk %}">Delete</a>
                             </li>
                         {% endfor %}
                     </ul>
+                {% else %}
+                    <h4>No candidates yet.</h4>
                 {% endif %}
 
             {% endif %}
-        </article>
+        </section>
 
 
-        <div class="col-sm-3">
+        <section class="p-2 bd-highlight">
             {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -40,6 +45,7 @@
                     {% endfor %}
                 </ul>
             {% endif %}
+            <h3>Submit you CV from here:</h3>
             <form action="{% url 'description_job' pk=object.pk %}" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     {{ form }}
@@ -47,7 +53,7 @@
                     {% csrf_token %}
                 </div>
             </form>
-        </div>
+        </section>
     </div>
 
 

@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import forms as auth_forms
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django.forms.widgets import ClearableFileInput
 from django.contrib.auth import forms as auth_forms
 
 from jobbox.common.models import ProfileHR
@@ -20,8 +19,9 @@ class UserLoginForm(auth_forms.AuthenticationForm):
     }))
 
 
-class CustomClearableFileInputProfilePicture(ClearableFileInput):
-    clear_checkbox_label = ''
+class CustomClearableFileInputProfilePicture(forms.ClearableFileInput):
+    # template_name = 'custom_clearable_file_input.html'
+    pass
 
 
 class RegisterUserHRForm(auth_forms.UserCreationForm):
@@ -80,10 +80,24 @@ class RegisterUserHRForm(auth_forms.UserCreationForm):
 
 
 class EditUserHRForm(forms.ModelForm):
-    profile_picture = forms.ImageField(
-        widget=CustomClearableFileInputProfilePicture
-    )
-
     class Meta:
         model = ProfileHR
         exclude = ['user']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'company_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'profile_picture': CustomClearableFileInputProfilePicture(attrs={
+                'class': 'form-control',
+                'clear_checkbox_label': None
+            }),
+            'telephone_number': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    # profile_picture = forms.ImageField(
+    #     widget=CustomClearableFileInputProfilePicture
+    # )
+    #
+    # class Meta:
+    #     model = ProfileHR
+    #     exclude = ['user']

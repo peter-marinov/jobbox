@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    <form action="{% url 'about' %}" method="POST">
-        {{ form }}
-        <button>Send</button>
-        {% csrf_token %}
-    </form>
+
+    <div class="col-sm-4">
+        {% if messages %}
+            <ul class="success">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form action="{% url 'about' %}" method="POST">
+            <div class="form-group">
+                {{ form.as_p }}
+                <button class="btn btn-primary mt-2">Send</button>
+                {% csrf_token %}
+            </div>
+        </form>
+    </div>
 
 {% endblock %}

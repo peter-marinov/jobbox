@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>Do you want to delete {{ object.task }}</h2>
-    <form action="{% url 'delete_hr_task' pk=object.pk %}" method="POST">
-        {{ form }}
-        <button>Delete</button>
-        {% csrf_token %}
-    </form>
+
+    <div class="col-sm-8">
+        <h2>Do you want to delete the task: {{ object.task }}?</h2>
+        <form action="{% url 'delete_hr_task' pk=object.pk %}" method="POST">
+            <div class="form-group">
+                {{ form }}
+                <button class="btn btn-danger mt-2">Delete</button>
+                {% csrf_token %}
+            </div>
+        </form>
+    </div>
 
 {% endblock %}

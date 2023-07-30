@@ -2,7 +2,7 @@ from django.core import validators
 from django.db import models
 
 from jobbox.app_auth.models import AppUser
-from jobbox.job.validators import FileSizeValidatorInMB
+from jobbox.job.validators import FileSizeValidatorInMB, validate_pdf_file
 
 
 class Job(models.Model):
@@ -24,8 +24,8 @@ class Job(models.Model):
 
     company_logo = models.ImageField(
         upload_to='companies_logo',
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         validators=(
             FileSizeValidatorInMB(COMPANY_LOG_MAX_SIZE_IN_MB),
         )
@@ -61,10 +61,16 @@ class Job(models.Model):
 
 
 class UploadCV(models.Model):
+    PDF_FILE_MAX_SIZE_IN_MB = 2
+
     email = models.EmailField()
 
     pdf_file = models.FileField(
-        upload_to='cv_pdfs'
+        upload_to='cv_pdfs',
+        validators=[
+            FileSizeValidatorInMB(PDF_FILE_MAX_SIZE_IN_MB),
+            validate_pdf_file,
+        ]
     )
 
     job_id = models.ForeignKey(

@@ -12,11 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <title>JoBBox</title>
-     <link rel="icon" type="image/x-icon" href="{% static 'jobbox_logos/favicon.png'%}">
+    <link rel="icon" type="image/x-icon" href="{% static 'jobbox_logos/favicon.png' %}">
 </head>
 <body>
 
-<header>
+<header style="height: 20%">
     <nav class="navbar navbar-expand-sm navbar-light bg-info">
         <div class="container-fluid">
             <a href="{% url 'index' %}">
@@ -35,6 +35,9 @@
             {% else %}
                 <ul class="navbar-nav">
                     <li class="nav-item active">
+                        <span class="nav-link badge badge-dark fw-bold">Hi, {{ request.current_user.profilehr.first_name }}</span>
+                    </li>
+                    <li class="nav-item active">
                         <a class="nav-link badge badge-dark fw-bold" href="{% url 'create_job' %}">Create Job</a>
                     </li>
                     <li class="nav-item active">
@@ -50,19 +53,19 @@
 
 </header>
 
-<div>
-<main>
-<div class="container">
-<div class="row justify-content-center mt-5">
-    {% block content %}
-    {% endblock %}
-</div>
-</div>
-</main>
-</div>
 
-<footer class="bg-info py-5 pb-5 fixed-bottom">
-{#<footer class="footer navbar-fixed-bottom">#}
+<main style="height: 60%;" class="pt-5 pb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</main>
+
+
+<footer style="height: 20%;" class="bg-info py-5 pb-5">
+    {#<footer class="footer navbar-fixed-bottom">#}
     <div class="container text-light text-center">
         <a href="https://github.com/peter-marinov/jobbox">
             <i class="fa-brands fa-github"></i>

@@ -5,3 +5,19 @@ body {
 main {
     overflow-y: auto;
 }
+
+form .errorlist {
+    color: red;
+}
+
+ul .success {
+    color: green;
+}
+
+.card {
+    padding: 0;
+}
+
+/*.card {*/
+/*    background-color: transparent;*/
+/*}*/

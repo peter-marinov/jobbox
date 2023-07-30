@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-{% block content %}
-    <form action="{% url 'edit_note' pk=object.pk %}" method="POST">
-        {{ form }}
-        <button>Update</button>
-        {% csrf_token %}
-    </form>
-
-{% endblock %}

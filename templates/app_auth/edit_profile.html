@@ -2,7 +2,9 @@
 {% block content %}
 
     <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
-        {{ form.as_p }}
+        {{ form }}
+{#        {{ form.first_name.label_tag }}: {{ form.first_name }}#}
+{#        {{ form.last_name.label_tag }}: {{ form.last_name }}#}
         <button>Edit</button>
         {% csrf_token %}
     </form>

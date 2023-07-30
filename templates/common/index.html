@@ -6,7 +6,7 @@
 
             {% if jobs %}
                 <p>Filter your desired jobs:</p>
-                <input class="form-control container-fluid mb-3" id="myInput" type="text" placeholder="Search..">
+                <input class="form-control container-fluid mb-3" id="allJobsTableInput" type="text" placeholder="Search..">
                 <br>
                 <table class="table table-hover table-striped">
                     <thead>
@@ -18,7 +18,7 @@
                         <th scope="col"></th>
                     </tr>
                     </thead>
-                    <tbody id="myTable">
+                    <tbody id="allJobsTable">
                     {% for job in jobs %}
                         <tr>
                             <td>{{ job.title }}</td>
@@ -30,7 +30,7 @@
                                     Not shared
                                 {% endif %}
                             </td>
-                            <td>{{ job.description|truncatechars:21 }}</td>
+                            <td>{{ job.description|truncatechars:41 }}</td>
                             <td>
                                 <a class="btn btn-info" href="{% url 'description_job' pk=job.pk %}">See more</a>
                             </td>
@@ -46,9 +46,9 @@
 
     <script>
         $(document).ready(function () {
-            $("#myInput").on("keyup", function () {
+            $("#allJobsTableInput").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
-                $("#myTable tr").filter(function () {
+                $("#allJobsTable tr").filter(function () {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });

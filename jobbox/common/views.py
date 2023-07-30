@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic as views
 
+from jobbox.common.forms import ContactUsFrom
 from jobbox.common.models import ContactUs
 from jobbox.job.models import Job
 
@@ -18,9 +19,10 @@ def index(request):
 class AboutView(SuccessMessageMixin, views.CreateView):
     template_name = 'common/about.html'
     model = ContactUs
-    fields = '__all__'
+    form_class = ContactUsFrom
     success_url = reverse_lazy('about')
     success_message = "Your message has been sent successfully!"
+
     def get_initial(self):
         initial = super().get_initial()
         try:

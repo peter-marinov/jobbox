@@ -117,13 +117,11 @@ class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
         success_url = self.get_success_url()
         self.object.delete()
 
-        # Close the file handle
-        # self.object.company_logo.close()
-
         for image in images_list:
-            path = image.file.name
+            if hasattr(image, 'file'):
+                path = image.file.name
             # Close the file before delete
-            image.close()
+                image.close()
 
             if os.path.exists(path):
                 os.remove(path)

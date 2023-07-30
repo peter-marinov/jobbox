@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic as views
 from django.contrib.auth import mixins as auth_mixins
+
+from jobbox.task.forms import HRTaskForm
 from jobbox.task.models import HRTask
 
 
@@ -26,7 +28,7 @@ class UserProfileHRAccessOwnTaskMixin:
 class CreateHRTask(auth_mixins.LoginRequiredMixin, UserProfileHRAccessMixin, views.CreateView):
     template_name = 'task/create_task.html'
     model = HRTask
-    fields = ['task', 'status']
+    form_class = HRTaskForm
     success_url = reverse_lazy('profile_user')
 
     def form_valid(self, form):
@@ -48,7 +50,7 @@ class ListHRTask(auth_mixins.LoginRequiredMixin, UserProfileHRAccessMixin, views
 class EditHRTask(auth_mixins.LoginRequiredMixin, UserProfileHRAccessOwnTaskMixin, views.UpdateView):
     template_name = 'task/edit_task.html'
     model = HRTask
-    fields = ['task', 'status']
+    form_class = HRTaskForm
     success_url = reverse_lazy('list_hr_task')
 
 

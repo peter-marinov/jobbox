@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-
-    <form action="{% url 'create_hr_task' %}" method="POST">
-        {{ form }}
-        <button>Create</button>
-        {% csrf_token %}
-    </form>
+    <div class="col-sm-4">
+        <form action="{% url 'create_hr_task' %}" method="POST">
+            <div class="form-group">
+                {{ form }}
+                <button class="btn btn-primary mt-2">Create</button>
+                {% csrf_token %}
+            </div>
+        </form>
+    </div>
 
 {% endblock %}
