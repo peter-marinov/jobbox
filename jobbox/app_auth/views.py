@@ -8,11 +8,13 @@ from django.urls import reverse_lazy
 from django.views import generic as views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import mixins as auth_mixins
+from django.contrib import messages
 
-from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm, UserLoginForm
+from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm, UserLoginForm, UserChangePasswordForm
 from jobbox.app_auth.models import AppUser
 
 from jobbox.job.models import Job
+from jobbox.task.models import HRTask
 
 UserModel = get_user_model()
 
@@ -47,6 +49,9 @@ def check_if_account_is_user_or_hr(request):
 def profile_user(request):
     context = {
         'user': request.current_user.profilehr,
+        'number_of_tasks': len(HRTask.objects.filter(user_id=request.current_user.pk)),
+        'number_of_jobs': len(Job.objects.filter(hr=request.current_user.pk)),
+
     }
     return render(request, 'app_auth/profile.html', context=context)
 
@@ -94,6 +99,25 @@ def update_profile(request):
             return redirect('profile_user')
 
     return render(request, 'app_auth/edit_profile.html', context={'form': form, 'user': user})
+
+
+@login_required
+def change_password(request):
+    if request.method == "GET":
+        form = UserChangePasswordForm(request.user)
+    else:
+        form = UserChangePasswordForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            login(request, request.user)
+            messages.success(request, 'Your password has been changed successfully.')
+            return redirect('profile_user')
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'app_auth/change_password.html', context=context)
 
 
 class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):

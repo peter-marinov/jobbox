@@ -2,11 +2,22 @@
 {% load static %}
 {% block content %}
 
+    {% if messages %}
+        <ul class="success d-flex justify-content-center">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <section class="card bg-transparent" style="width: 28rem;">
         {% if user.profile_picture %}
-            <img class="card-img-top" src="/media/{{ user.profile_picture }}" alt="company logo">
+            <img class="card-img-top" style="max-height: 14rem;" src="/media/{{ user.profile_picture }}"
+                 alt="company logo">
         {% else %}
-            <img class="card-img-top" src="{% static 'profilehr/profile-user.png' %}" alt="">
+            <div class="d-flex justify-content-center">
+                <img class="card-img-top pt-2" style="max-height: 14rem; max-width: 14rem;"
+                     src="{% static 'profilehr/profile-user.png' %}" alt="">
+            </div>
         {% endif %}
         <div class="card-body">
             <h5 class="card-title">Name: {{ user.full_name }}</h5>
@@ -17,22 +28,23 @@
             {% else %}
                 <p class="card-text">Telephone number: Not added</p>
             {% endif %}
-            <a class="btn btn-warning mr-5" href="{% url 'edit_profile' %}">Edit Profile</a>
-            <a class="btn btn-danger" href="{% url 'delete_profile' %}">Delete Profile</a>
+            <div id="profile-buttons">
+                <a class="btn btn-warning mb-3" href="{% url 'edit_profile' %}">Edit Profile</a>
+                <a class="btn btn-warning mb-3" href="{% url 'change_password' %}">Change Password</a>
+                <a class="btn btn-danger mb-3" href="{% url 'delete_profile' %}">Delete Profile</a>
+
+            </div>
+            <div id="jobs-buttons">
+                <p class="card-text">You have {{ number_of_jobs }} jobs created.</p>
+                <a class="btn btn-primary mb-3" href="{% url 'my_hr_list' %}">My jobs list</a>
+                <a class="btn btn-primary mb-3" href="{% url 'create_job' %}">Create job</a>
+            </div>
+            <div id="task-buttons">
+                <p class="card-text">You have {{ number_of_tasks }} tasks created.</p>
+                <a class="btn btn-primary" href="{% url 'list_hr_task' %}">My tasks list</a>
+                <a class="btn btn-primary" href="{% url 'create_hr_task' %}">Create task</a>
+            </div>
         </div>
     </section>
-
-    <div class="links">
-        <a href="{% url 'my_hr_list' %}">My jobs list</a>
-        <a href="{% url 'create_job' %}">Create job</a>
-
-        <a href="{% url 'list_hr_task' %}">My tasks list</a>
-        <a href="{% url 'create_hr_task' %}">Create task</a>
-
-
-        <br>
-        <br>
-
-    </div>
 
 {% endblock %}

@@ -19,11 +19,6 @@ class UserLoginForm(auth_forms.AuthenticationForm):
     }))
 
 
-class CustomClearableFileInputProfilePicture(forms.ClearableFileInput):
-    # template_name = 'custom_clearable_file_input.html'
-    pass
-
-
 class RegisterUserHRForm(auth_forms.UserCreationForm):
     FIRST_NAME_MAX_LEN = ProfileHR.FIRST_NAME_MAX_LEN
     COMPANY_NAME_MAX_LEN = ProfileHR.COMPANY_NAME_MAX_LEN
@@ -87,17 +82,14 @@ class EditUserHRForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'company_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'profile_picture': CustomClearableFileInputProfilePicture(attrs={
-                'class': 'form-control',
-                'clear_checkbox_label': None
-            }),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control',}),
             'telephone_number': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-    # profile_picture = forms.ImageField(
-    #     widget=CustomClearableFileInputProfilePicture
-    # )
-    #
-    # class Meta:
-    #     model = ProfileHR
-    #     exclude = ['user']
+
+class UserChangePasswordForm(auth_forms.PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name in self.fields:
+            self.fields[field_name].widget.attrs['class'] = 'form-control'

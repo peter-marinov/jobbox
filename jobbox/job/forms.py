@@ -22,7 +22,7 @@ class EditJobFrom(forms.ModelForm):
         fields = ['title', 'company_logo', 'programming_language', 'salary', 'description']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'company_logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'company_logo': forms.FileInput(attrs={'class': 'form-control'}),
             'programming_language': forms.TextInput(attrs={'class': 'form-control'}),
             'salary': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),

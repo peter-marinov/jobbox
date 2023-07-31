@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div class="col-sm-4">
-        <h4>Do you want to delete job {{ object.title }}</h4>
+    <div class="col-sm-6">
+        <h2>Do you want to delete job {{ object.title }}?</h2>
         <form action="{% url 'delete_job' pk=object.pk %}" method="POST">
             <div class="form-group">
                 {{ form }}

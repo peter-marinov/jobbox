@@ -5,7 +5,7 @@
                 <form action="{% url 'create_job' %}" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         {{ form }}
-                        <button class="btn btn-primary mt-2">Create</button>
+                        <button class="btn btn-success mt-2">Create</button>
                         {% csrf_token %}
                     </div>
                 </form>

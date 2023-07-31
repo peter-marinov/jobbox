@@ -28,8 +28,7 @@ class AboutView(SuccessMessageMixin, views.CreateView):
         try:
             user_email = self.request.current_user.email
             initial['email'] = user_email
-        except:
+        except AttributeError:
             pass
 
         return initial
-

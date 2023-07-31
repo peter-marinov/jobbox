@@ -16,17 +16,17 @@
 </head>
 <body>
 
-<header style="height: 20%">
+<header class="header" stlye="height: 100%;">
     <nav class="navbar navbar-expand-sm navbar-light bg-info">
         <div class="container-fluid">
             <a href="{% url 'index' %}">
-                <img src="{% static 'jobbox_logos/logo_transparent.png' %}" alt="JoBBoX logo" width="100"
+                <img src="{% static 'jobbox_logos/logo_transparent.png' %}" alt="JoBBoX logo" width="150"
                      class="d-inline-block align-top">
             </a>
             {% if not request.current_user.is_authenticated %}
                 <ul class="navbar-nav">
                     <li class="nav-item active">
-                        <a class="nav-link badge badge-dark fw-bold" href="{% url 'login_user' %}">Login</a>
+                        <a class="nav-link badge badge-dark fw-bold nav-link" href="{% url 'login_user' %}">Login</a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link badge badge-dark" href="{% url 'register_user' %}">Register</a>
@@ -54,7 +54,7 @@
 </header>
 
 
-<main style="height: 60%;" class="pt-5 pb-5">
+<main class="main-content">
     <div class="container">
         <div class="row justify-content-center">
             {% block content %}
@@ -64,14 +64,22 @@
 </main>
 
 
-<footer style="height: 20%;" class="bg-info py-5 pb-5">
+<footer class="bg-info footer">
     {#<footer class="footer navbar-fixed-bottom">#}
-    <div class="container text-light text-center">
-        <a href="https://github.com/peter-marinov/jobbox">
-            <i class="fa-brands fa-github"></i>
-        </a>
-        <p><a href="{% url 'about' %}">About Us</a></p>
-        <small class="text-white-70">&copy; Copyright by Peter Marinov. All rights reserved.</small>
+    <div class="container text-light text-center pt-1">
+        <ul class="list-unstyled">
+            <li>
+                <a href="https://github.com/peter-marinov/jobbox">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+            </li>
+            <li>
+                <a class="remove-link-underline text-white-70" href="{% url 'about' %}">About Us</a>
+            </li>
+            <li>
+                <small class="text-white-70">&copy; Copyright by Peter Marinov. All rights reserved.</small>
+            </li>
+        </ul>
 
 
     </div>
