@@ -77,18 +77,17 @@ def update_profile(request):
             user.telephone_number = form.cleaned_data['telephone_number']
 
             if 'profile_picture' in form.cleaned_data:
-                new_profile_picture = form.cleaned_data['profile_picture']
-
-                # Check if the new profile picture is different from the existing one
-                if new_profile_picture != user.profile_picture:
-                    # Remove the existing profile picture file from storage
-                    if user.profile_picture:
-                        # Delete the existing profile picture file from storage
-                        if os.path.exists(user.profile_picture.path):
-                            os.remove(user.profile_picture.path)
-
-                    # Assign the new profile picture to the user
-                    user.profile_picture = new_profile_picture
+                if form.cleaned_data['profile_picture'] is not None:
+                    new_profile_picture = form.cleaned_data['profile_picture']
+                    # Check if the new profile picture is different from the existing one
+                    if new_profile_picture != user.profile_picture:
+                        # Remove the existing profile picture file from storage
+                        if user.profile_picture:
+                            # Delete the existing profile picture file from storage
+                            if os.path.exists(user.profile_picture.path):
+                                os.remove(user.profile_picture.path)
+                        # Assign the new profile picture to the user
+                        user.profile_picture = new_profile_picture
 
             user.save()
 
@@ -120,7 +119,7 @@ class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
         for image in images_list:
             if hasattr(image, 'file'):
                 path = image.file.name
-            # Close the file before delete
+                # Close the file before delete
                 image.close()
 
             if os.path.exists(path):
