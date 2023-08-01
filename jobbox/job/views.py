@@ -1,7 +1,5 @@
 import os
-from dataclasses import fields
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,6 +8,7 @@ from django.views import generic as views
 from django.contrib.auth import mixins as auth_mixins
 from django.contrib import messages
 from django.http import FileResponse
+from django.core.exceptions import PermissionDenied
 
 from jobbox.app_auth.views import check_if_account_is_user_or_hr
 from jobbox.job.forms import CreateJobFrom, EditJobFrom, UploadCVForm
@@ -52,7 +51,7 @@ class HrJobListView(views.ListView):
         if hasattr(user, 'profilehr') or user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
 
-        return HttpResponse('You do not have permission to access this page.', status=403)
+        raise PermissionDenied()
 
 
 def description_job_view(request, pk):
@@ -94,7 +93,7 @@ class OnlyHRCanEditAndDeleteTheirJobMixin:
     def dispatch(self, request, *args, **kwargs):
         user = self.request.current_user
         if not user:
-            return HttpResponse('You do not have permission to access this page.', status=403)
+            raise PermissionDenied()
 
         try:
             job = Job.objects.get(pk=kwargs['pk'])
@@ -108,7 +107,7 @@ class OnlyHRCanEditAndDeleteTheirJobMixin:
         if hasattr(user, 'profilehr') and has_job_created:
             return super().dispatch(request, *args, **kwargs)
 
-        return HttpResponse('You do not have permission to access this page.', status=403)
+        raise PermissionDenied()
 
 
 class EditJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.UpdateView):

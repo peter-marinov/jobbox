@@ -1,8 +1,8 @@
-from django import forms
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic as views
 from django.contrib.auth import mixins as auth_mixins
+from django.core.exceptions import PermissionDenied
 
 from jobbox.task.forms import HRTaskForm
 from jobbox.task.models import HRTask
@@ -13,8 +13,7 @@ class UserProfileHRAccessMixin:
         user = self.request.current_user
         if hasattr(user, 'profilehr'):
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponse('You do not have permission to access this page.', status=403)
-
+        raise PermissionDenied()
 
 class UserProfileHRAccessOwnTaskMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -22,8 +21,7 @@ class UserProfileHRAccessOwnTaskMixin:
         user = self.request.current_user
         if hasattr(user, 'profilehr') and user.pk == instance.user_id_id:
             return super().dispatch(request, *args, **kwargs)
-        return HttpResponse('You do not have permission to access this page.', status=403)
-
+        raise PermissionDenied()
 
 class CreateHRTask(auth_mixins.LoginRequiredMixin, UserProfileHRAccessMixin, views.CreateView):
     template_name = 'task/create_task.html'
