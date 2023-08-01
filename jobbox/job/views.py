@@ -56,7 +56,7 @@ class HrJobListView(views.ListView):
 
 
 def description_job_view(request, pk):
-    job_object = Job.objects.get(pk=pk)
+    job_object =  get_object_or_404(Job, pk=pk)
     job_cvs = UploadCV.objects.filter(job_id=pk)
     if request.method == 'GET':
         form = UploadCVForm(initial={'job_id': job_object.pk})
