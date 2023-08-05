@@ -59,3 +59,7 @@ ul .success {
 .text-wrap {
     white-space: normal;
 }
+
+.color-purple {
+    color: rebeccapurple;
+}

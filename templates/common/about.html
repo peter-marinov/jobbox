@@ -1,21 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="d-flex align-items-start justify-content-around bd-highlight mb-3 mt-5">
+        <article class="col-sm-6">
+            <h3>About <span class="color-purple">JoBBoX</span>:</h3>
 
-    <div class="col-sm-4">
-        {% if messages %}
-            <ul class="success">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        <form action="{% url 'about' %}" method="POST">
-            <div class="form-group">
-                {{ form.as_p }}
-                <button class="btn btn-primary mt-2">Send</button>
-                {% csrf_token %}
-            </div>
-        </form>
+            <p>
+                Welcome to <span class="color-purple">JoBBoX</span>, your premier destination for hassle-free job
+                posting and talent acquisition. We
+                understand
+                that finding the right talent for your company is crucial, and that's why we've created a platform that
+                connects
+                HR professionals with top-tier candidates.
+            </p>
+            <h3>Our Mission:</h3>
+            <p>
+                At <span class="color-purple">JoBBoX</span>, our mission is simple yet impactful - to bridge the gap
+                between exceptional companies and
+                outstanding
+                professionals. We strive to provide HR professionals with a user-friendly, efficient, and effective
+                platform
+                to
+                showcase their job opportunities and connect with qualified candidates. We are dedicated to making the
+                recruitment process smoother, faster, and more streamlined.
+            </p>
+
+            <h3>Our Vision:</h3>
+            <p>
+                We envision a future where <span class="color-purple">JoBBoX</span> plays a pivotal role in transforming
+                the recruitment landscape. By
+                harnessing the power of technology and human connection, we aim to become the go-to platform for both
+                job seekers and employers, redefining how companies discover exceptional talent.
+            </p>
+        </article>
+
+        <div class="col-sm-4">
+            <h3>Contact us</h3>
+            {% if messages %}
+                <ul class="success">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form action="{% url 'about' %}" method="POST">
+                <div class="form-group">
+                    {{ form.as_p }}
+                    <button class="btn btn-primary mt-2">Send</button>
+                    {% csrf_token %}
+                </div>
+            </form>
+        </div>
     </div>
-
 {% endblock %}
