@@ -47,14 +47,14 @@ ul .success {
 
 .remove-link-underline {
     text-decoration: none;
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-/*#footer-list {*/
-/*    height: 100%;*/
-/*    border: 1px solid red;*/
-/*    margin: auto;*/
-/*}*/
+#footer-list {
+    margin-top: 5px;
+    margin-bottom: 1px;
+    color: rgba(255, 255, 255, 0.7);
+}
 
 .text-wrap {
     white-space: normal;
