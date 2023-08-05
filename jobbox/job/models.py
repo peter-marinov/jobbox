@@ -12,6 +12,7 @@ class Job(models.Model):
     TITLE_MAX_LEN = 30
     PROGRAMMING_LANGUAGE_MAX_LEN = 15
     SALARY_MIN_VALUE = 0
+    SALARY_MAX_VALUE = 150000
     DESCRIPTION_MIN_LEN = 20
     DESCRIPTION_MAX_LEN = 300
     COMPANY_LOG_MAX_SIZE_IN_MB = 1
@@ -42,6 +43,7 @@ class Job(models.Model):
         blank=True,
         validators=(
             validators.MinValueValidator(SALARY_MIN_VALUE),
+            validators.MaxValueValidator(SALARY_MAX_VALUE),
         )
     )
 

@@ -8,12 +8,12 @@ html, body {
 }
 
 .main-content {
-    min-height: 78%;
+    min-height: 80%;
 =
 }
 
 .footer {
-    height: 12%;
+    height: 10%;
 }
 
 .nav-link {
@@ -48,4 +48,14 @@ ul .success {
 .remove-link-underline {
     text-decoration: none;
     color: white;
+}
+
+/*#footer-list {*/
+/*    height: 100%;*/
+/*    border: 1px solid red;*/
+/*    margin: auto;*/
+/*}*/
+
+.text-wrap {
+    white-space: normal;
 }

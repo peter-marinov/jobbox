@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Contact Us</h2>
+
+    {% if object_list %}
+        <p>Filter the feedback:</p>
+        <input class="form-control container-fluid mb-3" id="allContactUsInput" type="text" placeholder="Search..">
+        <br>
+        <table class="table table-hover table-striped table-condensed">
+            <thead>
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">Topic</th>
+                <th class="text-wrap" scope="col">Description</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody id="allContactUsTable">
+            {% for feedback in object_list %}
+                <tr>
+                    <td>{{ feedback.email }}</td>
+                    <td>{{ feedback.topic }}</td>
+                    <td><p>{{ feedback.description }}</p></td>
+                    <td>
+                        <a class="btn btn-warning" href="{% url 'edit_contact_us' pk=feedback.pk %}">Edit</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-danger" href="{% url 'delete_contact_us' pk=feedback.pk %}">Delete</a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h1>No feedback from Contact Us yet :(</h1>
+    {% endif %}
+
+
+    <script>
+        $(document).ready(function () {
+            $("#allContactUsInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#allContactUsTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

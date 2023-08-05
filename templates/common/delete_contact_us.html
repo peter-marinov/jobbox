@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="col-sm-8">
+    <h2>Do you want to delete the feedback from topic {{ object.topic }}?</h2>
+    <form action="{% url 'delete_contact_us' pk=object.pk %}" method="POST">
+        <div class="form-group">
+        <button class="btn btn-danger mt-2">Confirm</button>
+        {% csrf_token %}
+        </div>
+    </form>
+    </div>
+
+{% endblock %}

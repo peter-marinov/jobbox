@@ -37,6 +37,11 @@
                     <li class="nav-item active">
                         <span class="nav-link badge badge-dark fw-bold">Hi, {{ request.current_user.profilehr.first_name }}</span>
                     </li>
+                    {% if request.current_user.is_admin or request.current_user.is_staff %}
+                        <li class="nav-item active">
+                            <a class="nav-link badge badge-dark fw-bold" href="{% url 'contact_us_list' %}">Check feedback</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item active">
                         <a class="nav-link badge badge-dark fw-bold" href="{% url 'create_job' %}">Create Job</a>
                     </li>
@@ -56,7 +61,7 @@
 
 <main class="main-content">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mt-4">
             {% block content %}
             {% endblock %}
         </div>
@@ -65,9 +70,8 @@
 
 
 <footer class="bg-info footer">
-    {#<footer class="footer navbar-fixed-bottom">#}
-    <div class="container text-light text-center pt-1">
-        <ul class="list-unstyled">
+    <div class="container-fluid d-flex justify-content-center" style="width: 100%;">
+        <ul class="list-unstyled text-center" id="footer-list" >
             <li>
                 <a href="https://github.com/peter-marinov/jobbox">
                     <i class="fa-brands fa-github"></i>
@@ -80,9 +84,8 @@
                 <small class="text-white-70">&copy; Copyright by Peter Marinov. All rights reserved.</small>
             </li>
         </ul>
-
-
     </div>
+
 </footer>
 
 </body>

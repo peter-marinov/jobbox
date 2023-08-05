@@ -1,7 +1,7 @@
 import os
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic as views
@@ -10,14 +10,13 @@ from django.contrib import messages
 from django.http import FileResponse
 from django.core.exceptions import PermissionDenied
 
-from jobbox.app_auth.views import check_if_account_is_user_or_hr
 from jobbox.job.forms import CreateJobFrom, EditJobFrom, UploadCVForm
 from jobbox.job.models import Job, UploadCV
 
 
 @login_required
 def create_job(request):
-    user = check_if_account_is_user_or_hr(request)
+    user = request.current_user.profilehr
 
     if request.method == 'GET':
         form = CreateJobFrom(initial={'hr': user.pk})
@@ -55,7 +54,7 @@ class HrJobListView(views.ListView):
 
 
 def description_job_view(request, pk):
-    job_object =  get_object_or_404(Job, pk=pk)
+    job_object = get_object_or_404(Job, pk=pk)
     job_cvs = UploadCV.objects.filter(job_id=pk)
     if request.method == 'GET':
         form = UploadCVForm(initial={'job_id': job_object.pk})
@@ -135,9 +134,7 @@ class EditJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.UpdateView):
                 # Assign the new logo picture to the job
                 job.company_logo = new_company_logo
 
-        self.object = form.save()
         return super().form_valid(form)
-
 
 
 class DeleteJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.DeleteView):
@@ -165,3 +162,23 @@ class DeleteCVView(auth_mixins.LoginRequiredMixin, views.DeleteView):
     fields = '__all__'
     success_message = 'The CV has been removed successfully.'
     success_url = reverse_lazy('profile_user')
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.current_user
+        if not user:
+            raise PermissionDenied()
+
+        try:
+            cv = get_object_or_404(UploadCV, pk=kwargs['pk'])
+            job = get_object_or_404(Job, pk=cv.job_id.pk)
+            if job.hr_id == user.pk:
+                cv_for_this_job = True
+            else:
+                cv_for_this_job = False
+        except UploadCV.DoesNotExist:
+            cv_for_this_job = False
+
+        if hasattr(user, 'profilehr') and cv_for_this_job:
+            return super().dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()

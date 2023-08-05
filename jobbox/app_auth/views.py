@@ -40,9 +40,9 @@ class LogoutUserView(auth_views.LogoutView):
     pass
 
 
-def check_if_account_is_user_or_hr(request):
-    if hasattr(request.current_user, 'profilehr'):
-        return request.current_user.profilehr
+# def check_if_account_is_user_or_hr(request):
+#     if hasattr(request.current_user, 'profilehr'):
+#         return request.current_user.profilehr
 
 
 @login_required
@@ -58,7 +58,7 @@ def profile_user(request):
 
 @login_required
 def update_profile(request):
-    user = check_if_account_is_user_or_hr(request)
+    user = request.current_user.profilehr
 
     # Set the initial data for edit in the form
     initial_data = {

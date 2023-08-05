@@ -77,7 +77,7 @@ class ProfileHR(models.Model):
 class ContactUs(models.Model):
     TOPIC_MAX_LEN = 20
     DESCRIPTION_MIN_LEN = 20
-    DESCRIPTION_MAX_LEN = 300
+    DESCRIPTION_MAX_LEN = 150
 
     email = models.EmailField()
 
