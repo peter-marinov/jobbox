@@ -10,7 +10,8 @@ from django.contrib import messages
 from django.http import FileResponse
 from django.core.exceptions import PermissionDenied
 
-from jobbox.job.forms import CreateJobFrom, EditJobFrom, UploadCVForm
+from jobbox.app_auth.models import AppUser
+from jobbox.job.forms import CreateJobFrom, EditJobFrom, UploadCVForm, CreateEditJobFromAdmin
 from jobbox.job.models import Job, UploadCV
 
 
@@ -19,11 +20,18 @@ def create_job(request):
     user = request.current_user.profilehr
 
     if request.method == 'GET':
-        form = CreateJobFrom(initial={'hr': user.pk})
+        if request.current_user.is_superuser:
+            form = CreateEditJobFromAdmin(initial={'hr': user.pk})
+        else:
+            form = CreateJobFrom(initial={'hr': user.pk})
     else:
-        form = CreateJobFrom(request.POST, request.FILES)
+        if request.current_user.is_superuser:
+            form = CreateEditJobFromAdmin(request.POST, request.FILES)
+        else:
+            form = CreateJobFrom(request.POST, request.FILES)
         if form.is_valid():
-            form.fields['hr_id'] = user.pk
+            if not request.current_user.is_superuser:
+                form.fields['hr_id'] = user.pk
             form.save()
 
             return redirect('my_hr_list')
@@ -36,7 +44,7 @@ def create_job(request):
     return render(request, 'job/create_job.html', context=context)
 
 
-class HrJobListView(views.ListView):
+class HrJobListView(auth_mixins.LoginRequiredMixin, views.ListView):
     template_name = 'job/hr_job_list.html'
     model = Job
 
@@ -77,6 +85,7 @@ def description_job_view(request, pk):
     return render(request, 'job/description_job.html', context=context)
 
 
+@login_required
 def download_cv(request, pk):
     cv_object = get_object_or_404(UploadCV, pk=pk)
     cv_path = cv_object.pdf_file.path
@@ -88,7 +97,7 @@ def download_cv(request, pk):
     return response
 
 
-class OnlyHRCanEditAndDeleteTheirJobMixin:
+class OnlyHrAndAdminAndStaffCanEditJobMixin:
     def dispatch(self, request, *args, **kwargs):
         user = self.request.current_user
         if not user:
@@ -96,7 +105,7 @@ class OnlyHRCanEditAndDeleteTheirJobMixin:
 
         try:
             job = Job.objects.get(pk=kwargs['pk'])
-            if job.hr_id == user.pk:
+            if job.hr_id == user.pk or user.is_superuser or user.is_staff:
                 has_job_created = job
             else:
                 has_job_created = None
@@ -109,10 +118,36 @@ class OnlyHRCanEditAndDeleteTheirJobMixin:
         raise PermissionDenied()
 
 
-class EditJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.UpdateView):
+class OnlyHrAndAdminCanDeleteJobMixin:
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.current_user
+        if not user:
+            raise PermissionDenied()
+
+        try:
+            job = Job.objects.get(pk=kwargs['pk'])
+            if job.hr_id == user.pk or user.is_superuser:
+                has_job_created = job
+            else:
+                has_job_created = None
+        except Job.DoesNotExist:
+            has_job_created = None
+
+        if hasattr(user, 'profilehr') and has_job_created:
+            return super().dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
+
+class EditJobView(auth_mixins.LoginRequiredMixin, OnlyHrAndAdminAndStaffCanEditJobMixin, views.UpdateView):
     template_name = 'job/edit_job.html'
     model = Job
-    form_class = EditJobFrom
+    # form_class = EditJobFrom
+
+    def get_form_class(self):
+        if self.request.current_user.is_superuser or self.request.current_user.is_staff:
+            return CreateEditJobFromAdmin
+        return EditJobFrom
 
     def get_success_url(self):
         pk = self.object.pk
@@ -137,7 +172,7 @@ class EditJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.UpdateView):
         return super().form_valid(form)
 
 
-class DeleteJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.DeleteView):
+class DeleteJobView(auth_mixins.LoginRequiredMixin, OnlyHrAndAdminCanDeleteJobMixin, views.DeleteView):
     template_name = 'job/delete_job.html'
     model = Job
 
@@ -156,6 +191,7 @@ class DeleteJobView(OnlyHRCanEditAndDeleteTheirJobMixin, views.DeleteView):
         return HttpResponseRedirect(success_url)
 
 
+#
 class DeleteCVView(auth_mixins.LoginRequiredMixin, views.DeleteView):
     template_name = 'job/delete_cv.html'
     model = UploadCV
@@ -171,7 +207,7 @@ class DeleteCVView(auth_mixins.LoginRequiredMixin, views.DeleteView):
         try:
             cv = get_object_or_404(UploadCV, pk=kwargs['pk'])
             job = get_object_or_404(Job, pk=cv.job_id.pk)
-            if job.hr_id == user.pk:
+            if (job.hr_id == user.pk) or user.is_superuser:
                 cv_for_this_job = True
             else:
                 cv_for_this_job = False
@@ -182,3 +218,17 @@ class DeleteCVView(auth_mixins.LoginRequiredMixin, views.DeleteView):
             return super().dispatch(request, *args, **kwargs)
 
         raise PermissionDenied()
+
+    def form_valid(self, form):
+        pdf_file = self.object.pdf_file
+        pdf_file_path = self.object.pdf_file.file.name
+
+        success_url = self.get_success_url()
+        self.object.delete()
+
+        pdf_file.close()
+        if os.path.exists(pdf_file_path):
+
+            os.remove(pdf_file_path)
+
+        return HttpResponseRedirect(success_url)

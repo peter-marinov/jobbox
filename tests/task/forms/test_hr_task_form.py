@@ -40,4 +40,3 @@ class HRTaskFormTests(TestCase):
         form = HRTaskForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertTrue('status' in form.errors)
-        

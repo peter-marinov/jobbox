@@ -1,6 +1,11 @@
 from django import forms
+from django.contrib.auth import get_user_model
+
+from jobbox.app_auth.models import AppUser
+from jobbox.common.models import ProfileHR
 from jobbox.job.models import Job, UploadCV
 
+UserModel = get_user_model()
 
 class CreateJobFrom(forms.ModelForm):
     class Meta:
@@ -14,6 +19,24 @@ class CreateJobFrom(forms.ModelForm):
                 'salary': forms.NumberInput(attrs={'class': 'form-control'}),
                 'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             }
+
+
+class CreateEditJobFromAdmin(CreateJobFrom):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        profile_choices = [(user.pk, user) for user in AppUser.objects.all()]
+        self.fields['hr'].choices = profile_choices
+        self.fields['hr'].widget.attrs['class'] = 'form-control'
+
+    class Meta(CreateJobFrom.Meta):
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'company_logo': forms.FileInput(attrs={'class': 'form-control'}),
+            'programming_language': forms.TextInput(attrs={'class': 'form-control'}),
+            'salary': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            }
+
 
 
 class EditJobFrom(forms.ModelForm):

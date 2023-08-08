@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if object_list %}
+        <h2>All tasks created by the users</h2>
+        <p>Filter all tasks:</p>
+        <input class="form-control container-fluid mb-3" id="allTasksTableInput" type="text" placeholder="Search..">
+        <br>
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Created On</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Task</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody id="allTasksTable">
+            {% for task in object_list %}
+                <tr>
+                    <td>{{ task.date }}</td>
+                    <td>{{ task.user_id }}</td>
+                    <td>{{ task.task }}</td>
+                    <td>{{ task.status }}</td>
+                    <td>
+                        <a class="btn btn-warning" href="{% url 'edit_hr_task' pk=task.pk %}">Edit</a>
+                        {% if request.current_user.is_superuser %}
+                            <a class="btn btn-danger" href="{% url 'delete_hr_task' pk=task.pk %}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h3>You don't have any tasks created.</h3>
+    {% endif %}
+
+    <script>
+        $(document).ready(function () {
+            $("#allTasksTableInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#allTasksTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -9,11 +9,13 @@ from django.views import generic as views
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import mixins as auth_mixins
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 
 from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm, UserLoginForm, UserChangePasswordForm
 from jobbox.app_auth.models import AppUser
+from jobbox.common.models import ProfileHR
 
-from jobbox.job.models import Job
+from jobbox.job.models import Job, UploadCV
 from jobbox.task.models import HRTask
 
 UserModel = get_user_model()
@@ -40,18 +42,12 @@ class LogoutUserView(auth_views.LogoutView):
     pass
 
 
-# def check_if_account_is_user_or_hr(request):
-#     if hasattr(request.current_user, 'profilehr'):
-#         return request.current_user.profilehr
-
-
 @login_required
 def profile_user(request):
     context = {
-        'user': request.current_user.profilehr,
+        'user': request.current_user,
         'number_of_tasks': len(HRTask.objects.filter(user_id=request.current_user.pk)),
         'number_of_jobs': len(Job.objects.filter(hr=request.current_user.pk)),
-
     }
     return render(request, 'app_auth/profile.html', context=context)
 
@@ -130,17 +126,103 @@ class DeleteProfileView(auth_mixins.LoginRequiredMixin, views.DeleteView):
 
     def form_valid(self, form):
         user = self.request.current_user
-        images_list = [job.company_logo
+        files_list = [job.company_logo
                        for job in Job.objects.filter(hr_id=user.pk).all()]
+
+        all_user_jobs = Job.objects.filter(hr_id=user.pk)
+        all_cvs = UploadCV.objects.all()
+
+        for user_job in all_user_jobs:
+            for cv in all_cvs:
+                if user_job.pk == cv.job_id_id:
+                    files_list.append(cv.pdf_file)
 
         # Check if there is profile picture and then add it to the list
         if user.profilehr.profile_picture:
-            images_list.append(user.profilehr.profile_picture)
+            files_list.append(user.profilehr.profile_picture)
 
         success_url = self.get_success_url()
         self.object.delete()
 
-        for image in images_list:
+        for image in files_list:
+            if hasattr(image, 'file'):
+                path = image.file.name
+                # Close the file before delete
+                image.close()
+
+            if os.path.exists(path):
+                os.remove(path)
+
+        return HttpResponseRedirect(success_url)
+
+
+class AdminOrStaffMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not (request.user.is_superuser or request.user.is_staff):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+
+class AdminMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+
+class AllProfiles(auth_mixins.LoginRequiredMixin, AdminOrStaffMixin, views.ListView):
+    template_name = 'app_auth/all_profiles.html'
+    model = ProfileHR
+    form_class = EditUserHRForm
+    success_url = reverse_lazy('all_profiles')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['accounts'] = UserModel.objects.all()
+        return context
+
+
+class EditProfileAdministrator(auth_mixins.LoginRequiredMixin, AdminOrStaffMixin, views.UpdateView):
+    template_name = 'app_auth/edit_profile.html'
+    model = ProfileHR
+    form_class = EditUserHRForm
+    success_url = reverse_lazy('all_profiles')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['administrator'] = True
+        return context
+
+
+class DeleteProfileAdministrator(auth_mixins.LoginRequiredMixin, AdminMixin, views.DeleteView):
+    template_name = 'app_auth/delete_profile.html'
+    model = AppUser
+    success_url = reverse_lazy('all_profiles')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['administrator'] = True
+        return context
+
+    def form_valid(self, form):
+        user = self.object
+        files_list = [job.company_logo for job in Job.objects.filter(hr_id=user.pk).all()]
+        all_user_jobs = Job.objects.filter(hr_id=user.pk)
+        all_cvs = UploadCV.objects.all()
+
+        for user_job in all_user_jobs:
+            for cv in all_cvs:
+                if user_job.pk == cv.job_id_id:
+                    files_list.append(cv.pdf_file)
+
+        # Check if there is profile picture and then add it to the list
+        if user.profilehr.profile_picture:
+            files_list.append(user.profilehr.profile_picture)
+
+        success_url = self.get_success_url()
+        self.object.delete()
+
+        for image in files_list:
             if hasattr(image, 'file'):
                 path = image.file.name
                 # Close the file before delete

@@ -43,6 +43,9 @@
                 <p class="card-text">You have {{ number_of_tasks }} tasks created.</p>
                 <a class="btn btn-primary" href="{% url 'list_hr_task' %}">My tasks list</a>
                 <a class="btn btn-primary" href="{% url 'create_hr_task' %}">Create task</a>
+                {% if request.current_user.is_superuser or request.current_user.is_staff %}
+                    <a class="btn btn-primary" href="{% url 'list_all_tasks' %}">All tasks</a>
+                {% endif %}
             </div>
         </div>
     </section>

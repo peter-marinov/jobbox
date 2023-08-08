@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="col-sm-6">
-    <h2>Do you want to delete the profile?</h2>
-    <form action="{% url 'delete_profile' %}" method="POST">
+        <h2>Do you want to delete the profile?</h2>
+        {% if administrator %}
+            <form action="{% url 'delete_profile_administrator' pk=object.pk %}" method="POST">
+        {% else %}
+            <form action="{% url 'delete_profile' %}" method="POST">
+        {% endif %}
         <div class="form-group">
-        <button class="btn btn-danger mt-2">Confirm</button>
-        {% csrf_token %}
+            <button class="btn btn-danger mt-2">Confirm</button>
+            {% csrf_token %}
         </div>
-    </form>
+        </form>
     </div>
 
 {% endblock %}
