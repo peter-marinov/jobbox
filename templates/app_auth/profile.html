@@ -10,8 +10,8 @@
         </ul>
     {% endif %}
     <section class="card bg-transparent" style="width: 28rem;">
-        {% if user.profile_picture %}
-            <img class="card-img-top" style="max-height: 14rem;" src="/media/{{ user.profile_picture }}"
+        {% if user.profilehr.profile_picture %}
+            <img class="card-img-top" style="max-height: 14rem;" src="/media/{{ user.profilehr.profile_picture }}"
                  alt="company logo">
         {% else %}
             <div class="d-flex justify-content-center">
@@ -20,11 +20,15 @@
             </div>
         {% endif %}
         <div class="card-body">
-            <h5 class="card-title">Name: {{ user.full_name }}</h5>
-
-            <p class="card-text">Company: {{ user.company_name }}</p>
+            {% if user.profilehr.full_name == None %}
+                <h5 class="card-title mb-3">Name: Not given</h5>
+            {% else %}
+                <h5 class="card-title mb-3">Name: {{ user.profilehr.full_name }}</h5>
+            {% endif %}
+            <p class="card-text">Email: {{ user.email }}</p>
+            <p class="card-text">Company: {{ user.profilehr.company_name }}</p>
             {% if user.telephone_number %}
-                <p class="card-text">Telephone number: {{ user.telephone_number }}</p>
+                <p class="card-text">Telephone number: {{ user.profilehr.telephone_number }}</p>
             {% else %}
                 <p class="card-text">Telephone number: Not added</p>
             {% endif %}
