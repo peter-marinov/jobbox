@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from jobbox.app_auth.models import AppUser
-from jobbox.common.models import ProfileHR
 from jobbox.job.models import Job, UploadCV
 
 UserModel = get_user_model()
