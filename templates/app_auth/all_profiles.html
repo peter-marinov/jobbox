@@ -33,6 +33,7 @@
                     <td>
                         <a class="btn btn-warning" href="{% url 'edit_profile_administrator' pk=profile.pk %}">Edit</a>
                         {% if request.current_user.is_superuser %}
+                            <a class="btn btn-warning" href="{% url 'change_user_administrator' pk=profile.pk %}">Access</a>
                             <a class="btn btn-danger" href="{% url 'delete_profile_administrator' pk=profile.pk %}">Delete</a>
                         {% endif %}
                     </td>

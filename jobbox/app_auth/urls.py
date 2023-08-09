@@ -2,7 +2,7 @@ from django.urls import path
 
 from jobbox.app_auth.views import LoginUserView,  RegisterUserView, LogoutUserView, profile_user, \
     update_profile, change_password, DeleteProfileView, AllProfiles, EditProfileAdministrator, \
-    DeleteProfileAdministrator
+    DeleteProfileAdministrator, ChangeEmailAndRightsAdministrator
 
 urlpatterns = [
     path('login/', LoginUserView.as_view(), name='login_user'),
@@ -15,6 +15,7 @@ urlpatterns = [
     path('all/', AllProfiles.as_view(), name='all_profiles'),
     path('<int:pk>/edit', EditProfileAdministrator.as_view(), name='edit_profile_administrator'),
     path('<int:pk>/delete', DeleteProfileAdministrator.as_view(), name='delete_profile_administrator'),
+    path('<int:pk>/change', ChangeEmailAndRightsAdministrator.as_view(), name='change_user_administrator'),
 
 
 ]

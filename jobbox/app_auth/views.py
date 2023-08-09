@@ -11,7 +11,8 @@ from django.contrib.auth import mixins as auth_mixins
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 
-from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm, UserLoginForm, UserChangePasswordForm
+from jobbox.app_auth.forms import RegisterUserHRForm, EditUserHRForm, UserLoginForm, UserChangePasswordForm, \
+    AdminChangeEmailForm
 from jobbox.app_auth.models import AppUser
 from jobbox.common.models import ProfileHR
 
@@ -192,6 +193,13 @@ class EditProfileAdministrator(auth_mixins.LoginRequiredMixin, AdminOrStaffMixin
         context = super().get_context_data(**kwargs)
         context['administrator'] = True
         return context
+
+
+class ChangeEmailAndRightsAdministrator(auth_mixins.LoginRequiredMixin, AdminMixin, views.UpdateView):
+    template_name = 'app_auth/change_email_and_rights_administration.html'
+    model = UserModel
+    form_class = AdminChangeEmailForm
+    success_url = reverse_lazy('all_profiles')
 
 
 class DeleteProfileAdministrator(auth_mixins.LoginRequiredMixin, AdminMixin, views.DeleteView):

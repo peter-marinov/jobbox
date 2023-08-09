@@ -4,6 +4,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import forms as auth_forms
 
+from jobbox.app_auth.models import AppUser
 from jobbox.common.models import ProfileHR
 from jobbox.common.validators import check_if_only_letters
 
@@ -93,3 +94,23 @@ class UserChangePasswordForm(auth_forms.PasswordChangeForm):
 
         for field_name in self.fields:
             self.fields[field_name].widget.attrs['class'] = 'form-control'
+
+
+class AdminChangeEmailForm(forms.ModelForm):
+    # new_email = forms.EmailField(label='New Email')
+    # is_superuser = forms.BooleanField()
+    class Meta:
+        model = UserModel
+        fields = ['email', 'is_superuser', 'is_staff', 'groups']
+        widgets = {
+            'email': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'is_superuser': forms.CheckboxInput(attrs={'class': 'form-control'}),
+            # 'is_staff': forms.CheckboxInput(attrs={'class': 'form-control'}),
+            'groups': forms.SelectMultiple(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'email': '',
+            'is_superuser': '',
+            'is_staff': '',
+            'groups': '',
+        }
