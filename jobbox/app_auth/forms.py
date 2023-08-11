@@ -97,16 +97,13 @@ class UserChangePasswordForm(auth_forms.PasswordChangeForm):
 
 
 class AdminChangeEmailForm(forms.ModelForm):
-    # new_email = forms.EmailField(label='New Email')
-    # is_superuser = forms.BooleanField()
     class Meta:
         model = UserModel
-        fields = ['email', 'is_superuser', 'is_staff', 'groups']
+        fields = ['email', 'is_superuser', 'is_staff']
         widgets = {
             'email': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'is_superuser': forms.CheckboxInput(attrs={'class': 'form-control'}),
-            # 'is_staff': forms.CheckboxInput(attrs={'class': 'form-control'}),
-            'groups': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            # 'groups': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            # 'groups': forms.HiddenInput(attrs={'class': 'form-control'}),
         }
         help_texts = {
             'email': '',

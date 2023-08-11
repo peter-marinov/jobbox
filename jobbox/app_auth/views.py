@@ -2,6 +2,7 @@ import os
 
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -200,6 +201,19 @@ class ChangeEmailAndRightsAdministrator(auth_mixins.LoginRequiredMixin, AdminMix
     model = UserModel
     form_class = AdminChangeEmailForm
     success_url = reverse_lazy('all_profiles')
+
+    def form_valid(self, form):
+        user = self.object
+        group = Group.objects.get(name='staff')
+        if form.cleaned_data['is_staff']:
+            user.groups.add(group)
+        else:
+            user.groups.remove(group)
+
+        user.save()
+        form.save()
+
+        return super().form_valid(form)
 
 
 class DeleteProfileAdministrator(auth_mixins.LoginRequiredMixin, AdminMixin, views.DeleteView):

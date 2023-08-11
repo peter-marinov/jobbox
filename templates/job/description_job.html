@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="d-flex align-items-start justify-content-around bd-highlight mb-3 mt-5">
-        <section class="p-2 bd-highlight">
+    <div class="d-flex align-items-start justify-content-around bd-highlight mb-3">
+        <section class="col-sm-4 p-2 bd-highlight">
 
             <h3>Title: {{ object.title }}</h3>
             {% if object.company_logo %}
-                <img width=300 src="/media/{{ object.company_logo }}" alt="company logo">
+                <img class="company-logo" src="/media/{{ object.company_logo }}" alt="company logo">
             {% endif %}
-            <p>Programing language: {{ object.programming_language }} </p>
+            <p class="mt-2">Programing language: {{ object.programming_language }} </p>
             {% if object.salary %}
                 <p>Salary: {{ object.salary }}</p>
             {% endif %}
@@ -41,7 +41,7 @@
         </section>
 
 
-        <section class="p-2 bd-highlight">
+        <section class="col-sm-4 bd-highlight">
             {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}

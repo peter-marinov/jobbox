@@ -63,3 +63,8 @@ ul .success {
 .color-purple {
     color: rebeccapurple;
 }
+
+.company-logo {
+    max-width: 100%;
+
+}
