@@ -26,10 +26,34 @@
                             <td>{{ matching_object.email }}</td>
                         {% endif %}
                     {% endwith %}
-                    <td>{{ profile.full_name }}</td>
-                    <td>{{ profile.profile_picture }}</td>
-                    <td>{{ profile.company_name }}</td>
-                    <td>{{ profile.telephone_number }}</td>
+                    <td>
+                        {% if profile.full_name == "None" %}
+                           Not added
+                        {% else %}
+                            {{ profile.full_name}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if profile.profile_picture %}
+                            {{ profile.profile_picture|cut:"profilehr/"}}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if profile.company_name %}
+                            {{ profile.company_name }}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if profile.telephone_number %}
+                            {{ profile.telephone_number }}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                    </td>
                     <td>
                         <a class="btn btn-warning" href="{% url 'edit_profile_administrator' pk=profile.pk %}">Edit</a>
                         {% if request.current_user.is_superuser %}
